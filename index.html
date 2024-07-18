@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Win/Loss Counter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #282c34;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        #counter {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+        input {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Win/Loss Counter</h1>
+    <input type="text" id="urlInput" placeholder="Enter your URL" value="https://stratus.network/yiasha" />
+    <button onclick="startFetching()">Start</button>
+    <div id="counter">Wins: 0, Losses: 0</div>
+
+    <script>
+        async function fetchGameData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Fetch error:', error);
+                return null;
+            }
+        }
+
+        async function updateCounter() {
+            const url = document.getElementById('urlInput').value;
+            if (!url) {
+                alert("Please enter a valid URL");
+                return;
+            }
+            const data = await fetchGameData(url);
+            if (data) {
+                const wins = data.wins || 0;
+                const losses = data.losses || 0;
+                document.getElementById('counter').textContent = `Wins: ${wins}, Losses: ${losses}`;
+            }
+        }
+
+        function startFetching() {
+            updateCounter(); // Initial call
+            setInterval(updateCounter, 60000); // Update every 60 seconds
+        }
+    </script>
+</body>
+</html>
